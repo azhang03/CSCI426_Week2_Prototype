@@ -38,6 +38,10 @@ public class Arrow : MonoBehaviour
         // Don't hit the player
         if (other.CompareTag("Player")) return;
 
+        if (other.CompareTag("Target")) return;
+
+        if (other.CompareTag("Damage")) return;
+
         // Handle hit (we'll expand this later for targets)
         Debug.Log($"Arrow hit: {other.gameObject.name}");
 
@@ -51,6 +55,8 @@ public class Arrow : MonoBehaviour
     {
         // Don't hit the player
         if (collision.gameObject.CompareTag("Player")) return;
+
+        if (collision.gameObject.CompareTag("Target")) return;
 
         // Handle hit
         Debug.Log($"Arrow hit: {collision.gameObject.name}");
