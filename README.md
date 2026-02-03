@@ -80,25 +80,74 @@ Both outcomes display your final score and track your best score across sessions
 
 ---
 
+## Audio System
+
+The game features a centralized audio system with support for various sound effects.
+
+### Sound Events
+
+| Event | Description |
+|-------|-------------|
+| Bow charge | Plays when starting to draw the bow (stops on release) |
+| Arrow fire | Plays when releasing an arrow (pitch varies with charge) |
+| Target hit | Plays when arrow hits a target |
+| Jump | Plays on each jump (with pitch variation) |
+| Walk | Footstep sounds while moving on ground |
+| Player hurt | Plays when taking damage |
+| Death | Impact sound and explosion on death |
+| Rock spawn | Plays when rocks drop |
+| Rock impact (ground) | Plays when rocks hit the ground |
+| Rock impact (platform) | Plays when rocks hit and break platforms |
+| Wolf spawn | Wolf howl when wolves appear |
+| Warning beeps | Increasing pitch beeps during hazard warnings |
+| Danger phase alert | Plays at the 1-minute mark when wolves start |
+| Score | Ding sound when gaining points (pitch scales with value) |
+
+### Screen Shake
+
+- **Death shake**: Strong, brief shake on player death
+- **Hit shake**: Lighter shake when taking non-lethal damage
+
+### Volume Control
+
+- Master volume slider in the pause menu (ESC)
+- Volume preference saves automatically and persists between sessions
+- Uses squared curve for natural volume feel
+
+### Setting Up Audio
+
+1. Create folders: `Assets/Audio/SFX/`, `Assets/Audio/Music/`, `Assets/Audio/UI/`
+2. Add `SoundManager` component to an empty GameObject in the scene
+3. Add `CameraShake` component to the Main Camera
+4. Assign AudioClips to components via the Inspector (look for [Audio] headers)
+
+---
+
 ## Project Structure
 
 ```
 Assets/
 ├── Scripts/
-│   ├── PlayerMovement.cs      # Player movement and health
+│   ├── PlayerMovement.cs      # Player movement, health, footsteps
 │   ├── PlayerAiming.cs        # Mouse-based aim indicator
-│   ├── BowController.cs       # Charge and fire mechanics
+│   ├── BowController.cs       # Charge and fire mechanics with audio
 │   ├── Arrow.cs               # Arrow projectile behavior
 │   ├── Target.cs              # Target spawning and hit detection
 │   ├── Score.cs               # Scoring, point scaling, floating text
 │   ├── GameTimer.cs           # Countdown timer, danger phase
-│   ├── FallingRock.cs         # Rock hazard behavior
-│   ├── FallingRockSpawner.cs  # Hazard spawning and difficulty scaling
+│   ├── FallingRock.cs         # Rock hazard behavior with impact sounds
+│   ├── FallingRockSpawner.cs  # Hazard spawning, difficulty scaling, audio
 │   ├── WolfLine.cs            # Wolf pack behavior
 │   ├── DamageablePlatform.cs  # Platform damage effects
-│   ├── PlayerDeath.cs         # Death sequence and screen
+│   ├── PlayerDeath.cs         # Death sequence with audio and screen shake
 │   ├── GameEndUI.cs           # Win/lose screens
-│   └── ControlsHelpUI.cs      # Pause menu and controls display
+│   ├── ControlsHelpUI.cs      # Pause menu, controls display, volume slider
+│   ├── SoundManager.cs        # Centralized audio manager (singleton)
+│   └── CameraShake.cs         # Screen shake effects (singleton)
+├── Audio/
+│   ├── SFX/                   # Sound effects
+│   ├── Music/                 # Background music (optional)
+│   └── UI/                    # UI sounds
 ├── Sprites/
 │   ├── rock.png
 │   ├── wolf.png
