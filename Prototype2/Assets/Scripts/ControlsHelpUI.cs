@@ -12,14 +12,23 @@ public class ControlsHelpUI : MonoBehaviour
     [SerializeField] private Color highlightColor = new Color(0.4f, 0.7f, 1f, 1f);
     [SerializeField] private Color textColor = Color.white;
     [SerializeField] private Color exitButtonColor = new Color(0.8f, 0.2f, 0.2f, 1f);
+    [SerializeField] private Color sliderFillColor = new Color(0.2f, 0.8f, 0.4f, 1f); // Bright green
     [SerializeField] private int fontSize = 16;
 
+    private const string VOLUME_PREF_KEY = "MasterVolume";
+    
     private Canvas canvas;
     private GameObject pauseMenuRoot;
     private bool isPaused = false;
+    private Slider volumeSlider;
+    private Text volumeValueText;
 
     void Start()
     {
+        // Load saved volume (saved as slider value 0-1, apply squared curve)
+        float savedSliderValue = PlayerPrefs.GetFloat(VOLUME_PREF_KEY, 1f);
+        AudioListener.volume = savedSliderValue * savedSliderValue;
+        
         CreateUI();
         // Start hidden
         pauseMenuRoot.SetActive(false);
@@ -54,12 +63,13 @@ public class ControlsHelpUI : MonoBehaviour
         pauseMenuRoot.SetActive(isPaused);
         Time.timeScale = isPaused ? 0f : 1f;
         
-        // Disable/enable player aiming when paused
-        SetPlayerAimingEnabled(!isPaused);
+        // Disable/enable player controls when paused
+        SetPlayerControlsEnabled(!isPaused);
     }
     
-    void SetPlayerAimingEnabled(bool enabled)
+    void SetPlayerControlsEnabled(bool enabled)
     {
+        // Disable aiming
         PlayerAiming aiming = FindFirstObjectByType<PlayerAiming>();
         if (aiming != null)
         {
@@ -70,6 +80,20 @@ public class ControlsHelpUI : MonoBehaviour
             else
                 aiming.ShowAimIndicator();
         }
+        
+        // Disable bow controller (prevents shooting while paused)
+        BowController bow = FindFirstObjectByType<BowController>();
+        if (bow != null)
+        {
+            bow.enabled = enabled;
+        }
+        
+        // Disable movement
+        PlayerMovement movement = FindFirstObjectByType<PlayerMovement>();
+        if (movement != null)
+        {
+            movement.enabled = enabled;
+        }
     }
 
     public void ResumeGame()
@@ -77,7 +101,7 @@ public class ControlsHelpUI : MonoBehaviour
         isPaused = false;
         pauseMenuRoot.SetActive(false);
         Time.timeScale = 1f;
-        SetPlayerAimingEnabled(true);
+        SetPlayerControlsEnabled(true);
     }
 
     public void ExitGame()
@@ -135,15 +159,15 @@ public class ControlsHelpUI : MonoBehaviour
         panelRect.anchorMin = new Vector2(0.5f, 0.5f);
         panelRect.anchorMax = new Vector2(0.5f, 0.5f);
         panelRect.pivot = new Vector2(0.5f, 0.5f);
-        panelRect.sizeDelta = new Vector2(700, 320);
+        panelRect.sizeDelta = new Vector2(700, 400); // Taller to fit volume slider
 
         Image panelImage = centerPanel.GetComponent<Image>();
         panelImage.color = panelColor;
 
         // Add vertical layout to center panel
         VerticalLayoutGroup vlg = centerPanel.AddComponent<VerticalLayoutGroup>();
-        vlg.spacing = 25;
-        vlg.padding = new RectOffset(30, 30, 30, 30);
+        vlg.spacing = 20;
+        vlg.padding = new RectOffset(30, 30, 25, 25);
         vlg.childAlignment = TextAnchor.MiddleCenter;
         vlg.childControlWidth = true;
         vlg.childControlHeight = false;
@@ -155,6 +179,9 @@ public class ControlsHelpUI : MonoBehaviour
 
         // Controls row (horizontal)
         CreateControlsRow(centerPanel.transform);
+        
+        // Volume slider
+        CreateVolumeSlider(centerPanel.transform);
 
         // Exit button
         CreateExitButton(centerPanel.transform);
@@ -269,6 +296,140 @@ public class ControlsHelpUI : MonoBehaviour
         label.fontSize = fontSize;
         label.color = textColor;
         label.alignment = TextAnchor.MiddleCenter;
+    }
+
+    void CreateVolumeSlider(Transform parent)
+    {
+        // Container for label + slider + value
+        GameObject container = new GameObject("VolumeContainer");
+        container.transform.SetParent(parent, false);
+        
+        RectTransform containerRect = container.AddComponent<RectTransform>();
+        containerRect.sizeDelta = new Vector2(500, 40);
+        
+        HorizontalLayoutGroup hlg = container.AddComponent<HorizontalLayoutGroup>();
+        hlg.spacing = 15;
+        hlg.childAlignment = TextAnchor.MiddleCenter;
+        hlg.childControlWidth = false;
+        hlg.childControlHeight = true;
+        hlg.childForceExpandWidth = false;
+        hlg.childForceExpandHeight = false;
+        
+        // Volume label
+        GameObject labelObj = new GameObject("VolumeLabel");
+        labelObj.transform.SetParent(container.transform, false);
+        
+        RectTransform labelRect = labelObj.AddComponent<RectTransform>();
+        labelRect.sizeDelta = new Vector2(80, 30);
+        
+        Text label = labelObj.AddComponent<Text>();
+        label.text = "Volume";
+        label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        label.fontSize = 20;
+        label.color = textColor;
+        label.alignment = TextAnchor.MiddleRight;
+        
+        // Slider
+        GameObject sliderObj = new GameObject("VolumeSlider");
+        sliderObj.transform.SetParent(container.transform, false);
+        
+        RectTransform sliderRect = sliderObj.AddComponent<RectTransform>();
+        sliderRect.sizeDelta = new Vector2(300, 30);
+        
+        volumeSlider = sliderObj.AddComponent<Slider>();
+        volumeSlider.minValue = 0f;
+        volumeSlider.maxValue = 1f;
+        volumeSlider.value = PlayerPrefs.GetFloat(VOLUME_PREF_KEY, 1f); // Use saved slider value
+        volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
+        
+        // Slider background
+        GameObject bgObj = new GameObject("Background");
+        bgObj.transform.SetParent(sliderObj.transform, false);
+        
+        RectTransform bgRect = bgObj.AddComponent<RectTransform>();
+        bgRect.anchorMin = new Vector2(0, 0.25f);
+        bgRect.anchorMax = new Vector2(1, 0.75f);
+        bgRect.sizeDelta = Vector2.zero;
+        bgRect.anchoredPosition = Vector2.zero;
+        
+        Image bgImage = bgObj.AddComponent<Image>();
+        bgImage.color = new Color(0.1f, 0.1f, 0.1f, 1f); // Dark background
+        
+        // Fill area
+        GameObject fillArea = new GameObject("Fill Area");
+        fillArea.transform.SetParent(sliderObj.transform, false);
+        
+        RectTransform fillAreaRect = fillArea.AddComponent<RectTransform>();
+        fillAreaRect.anchorMin = new Vector2(0, 0.25f);
+        fillAreaRect.anchorMax = new Vector2(1, 0.75f);
+        fillAreaRect.sizeDelta = new Vector2(-20, 0);
+        fillAreaRect.anchoredPosition = Vector2.zero;
+        
+        // Fill
+        GameObject fill = new GameObject("Fill");
+        fill.transform.SetParent(fillArea.transform, false);
+        
+        RectTransform fillRect = fill.AddComponent<RectTransform>();
+        fillRect.sizeDelta = Vector2.zero;
+        
+        Image fillImage = fill.AddComponent<Image>();
+        fillImage.color = sliderFillColor;
+        
+        volumeSlider.fillRect = fillRect;
+        
+        // Handle slide area
+        GameObject handleArea = new GameObject("Handle Slide Area");
+        handleArea.transform.SetParent(sliderObj.transform, false);
+        
+        RectTransform handleAreaRect = handleArea.AddComponent<RectTransform>();
+        handleAreaRect.anchorMin = Vector2.zero;
+        handleAreaRect.anchorMax = Vector2.one;
+        handleAreaRect.sizeDelta = new Vector2(-20, 0);
+        handleAreaRect.anchoredPosition = Vector2.zero;
+        
+        // Handle
+        GameObject handle = new GameObject("Handle");
+        handle.transform.SetParent(handleArea.transform, false);
+        
+        RectTransform handleRect = handle.AddComponent<RectTransform>();
+        handleRect.sizeDelta = new Vector2(20, 30);
+        
+        Image handleImage = handle.AddComponent<Image>();
+        handleImage.color = new Color(1f, 1f, 1f, 1f); // Bright white handle
+        
+        volumeSlider.handleRect = handleRect;
+        volumeSlider.targetGraphic = handleImage;
+        
+        // Volume value text (percentage)
+        GameObject valueObj = new GameObject("VolumeValue");
+        valueObj.transform.SetParent(container.transform, false);
+        
+        RectTransform valueRect = valueObj.AddComponent<RectTransform>();
+        valueRect.sizeDelta = new Vector2(60, 30);
+        
+        volumeValueText = valueObj.AddComponent<Text>();
+        float savedValue = PlayerPrefs.GetFloat(VOLUME_PREF_KEY, 1f);
+        volumeValueText.text = Mathf.RoundToInt(savedValue * 100) + "%";
+        volumeValueText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        volumeValueText.fontSize = 20;
+        volumeValueText.color = textColor;
+        volumeValueText.alignment = TextAnchor.MiddleLeft;
+    }
+    
+    void OnVolumeChanged(float value)
+    {
+        // Apply volume (squared for more natural curve)
+        AudioListener.volume = value * value;
+        
+        // Update display text
+        if (volumeValueText != null)
+        {
+            volumeValueText.text = Mathf.RoundToInt(value * 100) + "%";
+        }
+        
+        // Save preference
+        PlayerPrefs.SetFloat(VOLUME_PREF_KEY, value);
+        PlayerPrefs.Save();
     }
 
     void CreateExitButton(Transform parent)
