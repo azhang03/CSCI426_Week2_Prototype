@@ -117,16 +117,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        if (!other.CompareTag("Damage")) return;
-        Debug.Log("The yahoo");
-        if(other.GetComponent<DamageZone>().GetActive())
-        {
-            health--;
-            other.GetComponent<DamageZone>().HealthReducedCoolDown();
-        }
-    }
     
     /// <summary>
     /// Apply damage to the player

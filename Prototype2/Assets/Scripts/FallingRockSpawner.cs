@@ -165,14 +165,11 @@ public class FallingRockSpawner : MonoBehaviour
         
         // Add collider that conforms to sprite shape
         PolygonCollider2D col = rock.AddComponent<PolygonCollider2D>();
-        col.isTrigger = false; // Use collision, not trigger
+        col.isTrigger = false;
         
-        // Add FallingRock script
+        // Add FallingRock script and set its speed
         FallingRock fallingRock = rock.AddComponent<FallingRock>();
-        
-        // Set the rock's velocity via reflection or by making fallSpeed public
-        // For now, we'll set velocity directly here
-        rb.linearVelocity = Vector2.down * rockFallSpeed;
+        fallingRock.SetFallSpeed(rockFallSpeed);
         
         // Tag it for collision detection
         rock.tag = "Damage";

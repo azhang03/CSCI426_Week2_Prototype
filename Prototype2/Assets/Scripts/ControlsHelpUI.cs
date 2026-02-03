@@ -92,14 +92,28 @@ public class ControlsHelpUI : MonoBehaviour
 
     void CreateUI()
     {
-        // Find or create canvas
-        canvas = FindFirstObjectByType<Canvas>();
+        // Find a Screen Space Overlay canvas, or create one
+        canvas = null;
+        Canvas[] allCanvases = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+        foreach (Canvas c in allCanvases)
+        {
+            if (c.renderMode == RenderMode.ScreenSpaceOverlay)
+            {
+                canvas = c;
+                break;
+            }
+        }
+        
         if (canvas == null)
         {
-            GameObject canvasObj = new GameObject("Canvas");
+            GameObject canvasObj = new GameObject("UICanvas");
             canvas = canvasObj.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvasObj.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            
+            CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            
             canvasObj.AddComponent<GraphicRaycaster>();
         }
 

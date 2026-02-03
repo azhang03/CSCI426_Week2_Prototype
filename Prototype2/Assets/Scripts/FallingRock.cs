@@ -22,6 +22,18 @@ public class FallingRock : MonoBehaviour
             rb.linearVelocity = Vector2.down * fallSpeed;
         }
     }
+    
+    /// <summary>
+    /// Set the fall speed (called by spawner)
+    /// </summary>
+    public void SetFallSpeed(float speed)
+    {
+        fallSpeed = speed;
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.down * fallSpeed;
+        }
+    }
 
     void Update()
     {
@@ -59,7 +71,6 @@ public class FallingRock : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-        // Arrows don't destroy rocks - they just get blocked
     }
     
     private void OnCollisionEnter2D(Collision2D collision)
@@ -83,9 +94,18 @@ public class FallingRock : MonoBehaviour
             }
         }
         // Arrows don't destroy rocks - they just get blocked
-        // Only destroy when hitting ground/platforms (not arrows or targets)
         else if (!collision.gameObject.CompareTag("Target") && !collision.gameObject.CompareTag("Arrow"))
         {
+            // Check if we hit a platform (has "Platform" in name) - damage it
+            if (collision.gameObject.name.Contains("Platform"))
+            {
+                DamageablePlatform platform = collision.gameObject.GetComponent<DamageablePlatform>();
+                if (platform != null)
+                {
+                    platform.TriggerDamage();
+                }
+            }
+            
             // Destroy when hitting ground or platforms
             Destroy(gameObject);
         }
