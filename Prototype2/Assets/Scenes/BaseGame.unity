@@ -1238,7 +1238,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1853749613}
-  - {fileID: 1289275086}
+  - {fileID: 945178846}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1416,7 +1416,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1289275085
+--- !u!1 &945178845
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1424,91 +1424,45 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1289275086}
-  - component: {fileID: 1289275089}
-  - component: {fileID: 1289275088}
-  - component: {fileID: 1289275087}
-  m_Layer: 5
-  m_Name: Text (Legacy)
+  - component: {fileID: 945178846}
+  - component: {fileID: 945178847}
+  m_Layer: 0
+  m_Name: ScoreManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &1289275086
-RectTransform:
+--- !u!4 &945178846
+Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1289275085}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 1}
+  m_GameObject: {fileID: 945178845}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -967.6599, y: -399.03735, z: 0}
+  m_LocalScale: {x: 1.5750616, y: 1.5750616, z: 1.5750616}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 804871192}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 327, y: -65}
-  m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1289275087
+--- !u!114 &945178847
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1289275085}
+  m_GameObject: {fileID: 945178845}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 50298bb31d3a14fe1b451852b7d5a752, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
-  scoreText: {fileID: 1289275088}
---- !u!114 &1289275088
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1289275085}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
-    m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
-    m_Alignment: 0
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: 
---- !u!222 &1289275089
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1289275085}
-  m_CullTransparentMesh: 1
+  m_EditorClassIdentifier: Assembly-CSharp::Score
+  fontSize: 60
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  position: {x: 20, y: -20}
 --- !u!1 &1345034905
 GameObject:
   m_ObjectHideFlags: 0
@@ -1633,6 +1587,7 @@ GameObject:
   - component: {fileID: 1385170451}
   - component: {fileID: 1385170453}
   - component: {fileID: 1385170454}
+  - component: {fileID: 1385170455}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1708,7 +1663,7 @@ Transform:
   m_GameObject: {fileID: 1385170447}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.01, y: 3.37, z: 0}
+  m_LocalPosition: {x: 2, y: 2.94, z: 0}
   m_LocalScale: {x: 1.582422, y: 1.6154349, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1842,6 +1797,29 @@ MonoBehaviour:
   spawnOffset: 0.5
   chargeIndicator: {fileID: 1345034907}
   chargeUIContainer: {fileID: 1853749612}
+  chargeBarHeightOffset: 1.5
+  chargeBarSize: {x: 80, y: 12}
+--- !u!114 &1385170455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1385170447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a129e4109ae0e1041abf74530aa2e9c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDeath
+  deathThreshold: 0.3
+  hitstopDuration: 0.5
+  shakeDuration: 1
+  shakeIntensity: 0.1
+  shakeSpeed: 50
+  deathColor: {r: 1, g: 0.2, b: 0.2, a: 1}
+  explosionEffectPrefab: {fileID: 0}
+  explosionScale: 1
+  restartDelay: 1
 --- !u!1 &1580614173
 GameObject:
   m_ObjectHideFlags: 0
@@ -1907,9 +1885,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ControlsHelpUI
   backgroundColor: {r: 0, g: 0, b: 0, a: 0.5}
+  panelColor: {r: 0.15, g: 0.15, b: 0.15, a: 0.95}
   iconColor: {r: 0.9, g: 0.9, b: 0.9, a: 1}
   highlightColor: {r: 0.4, g: 0.7, b: 1, a: 1}
   textColor: {r: 1, g: 1, b: 1, a: 1}
+  exitButtonColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
   fontSize: 16
 --- !u!4 &1734181932
 Transform:
@@ -1939,7 +1919,7 @@ GameObject:
   - component: {fileID: 1827203431}
   - component: {fileID: 1827203430}
   m_Layer: 3
-  m_Name: Platform 2 (1)
+  m_Name: Platform 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2119,7 +2099,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -100, y: 100}
-  m_SizeDelta: {x: 30, y: 100}
+  m_SizeDelta: {x: 100, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1860195546
 GameObject:
@@ -2272,7 +2252,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40225d25384da4f08bb2c10bd43967e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  textObj: {fileID: 1289275085}
+  rightSpawnX: 22
+  leftSpawnX: -22
+  minSpawnY: -7
+  maxSpawnY: 9
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

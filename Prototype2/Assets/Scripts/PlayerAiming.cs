@@ -55,4 +55,26 @@ public class PlayerAiming : MonoBehaviour
 
         return ((Vector2)(mouseWorldPos - transform.position)).normalized;
     }
+
+    /// <summary>
+    /// Hides the aim indicator
+    /// </summary>
+    public void HideAimIndicator()
+    {
+        if (aimArrow != null)
+        {
+            aimArrow.gameObject.SetActive(false);
+        }
+    }
+    
+    /// <summary>
+    /// Shows the aim indicator
+    /// </summary>
+    public void ShowAimIndicator()
+    {
+        if (aimArrow != null)
+        {
+            aimArrow.gameObject.SetActive(true);
+        }
+    }
 }

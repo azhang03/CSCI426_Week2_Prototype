@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class ControlsHelpUI : MonoBehaviour
 {
     [Header("Styling")]
-    [SerializeField] private Color backgroundColor = new Color(0, 0, 0, 0.85f);
+    [SerializeField] private Color backgroundColor = new Color(0, 0, 0, 1f);
     [SerializeField] private Color panelColor = new Color(0.15f, 0.15f, 0.15f, 0.95f);
     [SerializeField] private Color iconColor = new Color(0.9f, 0.9f, 0.9f, 1f);
     [SerializeField] private Color highlightColor = new Color(0.4f, 0.7f, 1f, 1f);
@@ -53,6 +53,23 @@ public class ControlsHelpUI : MonoBehaviour
         isPaused = !isPaused;
         pauseMenuRoot.SetActive(isPaused);
         Time.timeScale = isPaused ? 0f : 1f;
+        
+        // Disable/enable player aiming when paused
+        SetPlayerAimingEnabled(!isPaused);
+    }
+    
+    void SetPlayerAimingEnabled(bool enabled)
+    {
+        PlayerAiming aiming = FindFirstObjectByType<PlayerAiming>();
+        if (aiming != null)
+        {
+            aiming.enabled = enabled;
+            // Also hide/show the aim indicator
+            if (!enabled)
+                aiming.HideAimIndicator();
+            else
+                aiming.ShowAimIndicator();
+        }
     }
 
     public void ResumeGame()
@@ -60,6 +77,7 @@ public class ControlsHelpUI : MonoBehaviour
         isPaused = false;
         pauseMenuRoot.SetActive(false);
         Time.timeScale = 1f;
+        SetPlayerAimingEnabled(true);
     }
 
     public void ExitGame()

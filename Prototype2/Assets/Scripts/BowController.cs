@@ -30,24 +30,62 @@ public class BowController : MonoBehaviour
     
     [Tooltip("Parent object of the charge UI (to show/hide)")]
     [SerializeField] private GameObject chargeUIContainer;
+    
+    [Tooltip("Vertical offset above player's head (in world units)")]
+    [SerializeField] private float chargeBarHeightOffset = 1.5f;
+    
+    [Tooltip("Size of the charge bar (width x height in pixels)")]
+    [SerializeField] private Vector2 chargeBarSize = new Vector2(80f, 12f);
 
     private PlayerAiming playerAiming;
+    private Camera mainCamera;
+    private RectTransform chargeUIRect;
+    private Canvas parentCanvas;
     private float currentChargeTime;
     private bool isCharging;
 
     private void Start()
     {
         playerAiming = GetComponent<PlayerAiming>();
+        mainCamera = Camera.main;
         
         if (playerAiming == null)
         {
             Debug.LogError("BowController requires PlayerAiming component!");
         }
 
-        // Hide charge UI initially
+        // Get RectTransform for positioning
         if (chargeUIContainer != null)
         {
+            chargeUIRect = chargeUIContainer.GetComponent<RectTransform>();
+            parentCanvas = chargeUIContainer.GetComponentInParent<Canvas>();
+            
+            // Set the size of the container
+            if (chargeUIRect != null)
+            {
+                chargeUIRect.sizeDelta = chargeBarSize;
+            }
+            
             chargeUIContainer.SetActive(false);
+        }
+        
+        // Set the charge indicator to fill horizontally (left to right)
+        if (chargeIndicator != null)
+        {
+            chargeIndicator.type = Image.Type.Filled;
+            chargeIndicator.fillMethod = Image.FillMethod.Horizontal;
+            chargeIndicator.fillOrigin = (int)Image.OriginHorizontal.Left;
+            
+            // Set the size of the fill image and make it stretch to fill the container
+            RectTransform indicatorRect = chargeIndicator.GetComponent<RectTransform>();
+            if (indicatorRect != null)
+            {
+                // Reset anchors to stretch mode (fill entire parent)
+                indicatorRect.anchorMin = Vector2.zero;
+                indicatorRect.anchorMax = Vector2.one;
+                indicatorRect.offsetMin = Vector2.zero;
+                indicatorRect.offsetMax = Vector2.zero;
+            }
         }
     }
 
@@ -103,6 +141,31 @@ public class BowController : MonoBehaviour
         {
             float chargePercent = currentChargeTime / maxChargeTime;
             chargeIndicator.fillAmount = chargePercent;
+        }
+        
+        // Position the charge bar above the player's head
+        if (chargeUIRect != null && mainCamera != null)
+        {
+            // Convert player's world position (with height offset) to screen position
+            Vector3 worldPos = transform.position + Vector3.up * chargeBarHeightOffset;
+            Vector3 screenPos = mainCamera.WorldToScreenPoint(worldPos);
+            
+            // Handle different canvas render modes
+            if (parentCanvas != null && parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            {
+                chargeUIRect.position = screenPos;
+            }
+            else if (parentCanvas != null)
+            {
+                // For Screen Space - Camera or World Space canvases
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    parentCanvas.transform as RectTransform,
+                    screenPos,
+                    parentCanvas.worldCamera,
+                    out Vector2 localPoint
+                );
+                chargeUIRect.localPosition = localPoint;
+            }
         }
     }
 
