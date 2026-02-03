@@ -251,4 +251,12 @@ public class Score : MonoBehaviour
     {
         return score;
     }
+    
+    /// <summary>
+    /// Developer tool: Add to elapsed time for testing
+    /// </summary>
+    public void AddElapsedTime(float seconds)
+    {
+        elapsedTime += seconds;
+    }
 }

@@ -486,4 +486,12 @@ public class FallingRockSpawner : MonoBehaviour
     {
         return wolvesEnabled;
     }
+    
+    /// <summary>
+    /// Developer tool: Add to elapsed time for testing
+    /// </summary>
+    public void AddElapsedTime(float seconds)
+    {
+        elapsedTime += seconds;
+    }
 }

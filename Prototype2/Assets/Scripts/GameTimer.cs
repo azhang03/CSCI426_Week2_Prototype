@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class GameTimer : MonoBehaviour
 {
@@ -62,6 +63,13 @@ public class GameTimer : MonoBehaviour
 
     void Update()
     {
+        // Developer keybind: Press 1 to fast-forward 10 seconds
+        var keyboard = Keyboard.current;
+        if (keyboard != null && keyboard.digit1Key.wasPressedThisFrame && hasStarted)
+        {
+            FastForward(10f);
+        }
+        
         if (!isRunning) return;
         
         currentTime -= Time.deltaTime;
@@ -238,6 +246,40 @@ public class GameTimer : MonoBehaviour
         hasStarted = true;
         isRunning = true;
         Debug.Log("Timer started! First target hit.");
+    }
+    
+    /// <summary>
+    /// Developer tool: Fast-forward time by specified seconds
+    /// </summary>
+    public void FastForward(float seconds)
+    {
+        // Update timer
+        currentTime -= seconds;
+        elapsedTime += seconds;
+        
+        // Clamp to prevent negative time
+        if (currentTime < 0f)
+        {
+            currentTime = 0f;
+        }
+        
+        // Also fast-forward Score's elapsed time
+        Score scoreManager = FindFirstObjectByType<Score>();
+        if (scoreManager != null)
+        {
+            scoreManager.AddElapsedTime(seconds);
+        }
+        
+        // Also fast-forward FallingRockSpawner's elapsed time
+        FallingRockSpawner spawner = FindFirstObjectByType<FallingRockSpawner>();
+        if (spawner != null)
+        {
+            spawner.AddElapsedTime(seconds);
+        }
+        
+        Debug.Log($"[DEV] Fast-forwarded {seconds} seconds! Elapsed: {elapsedTime:F1}s, Remaining: {currentTime:F1}s");
+        
+        UpdateTimerDisplay();
     }
     
     /// <summary>
