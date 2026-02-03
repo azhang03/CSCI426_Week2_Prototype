@@ -26,11 +26,11 @@ public class Target : MonoBehaviour
             float X;
             if(Random.Range(0,2) == 1)
             {
-                X = 17.34f;
+                X = 22.0f;
             }
             else
             {
-                X = -13.34f;
+                X = -22.0f;
             }
             Instantiate(this, new Vector3(X, Random.Range(-7f, 9f), 0), Quaternion.identity);
             textObj.GetComponent<Score>().ScorePlus();
