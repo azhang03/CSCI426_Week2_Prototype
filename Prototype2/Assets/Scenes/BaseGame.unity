@@ -400,8 +400,8 @@ Transform:
   m_GameObject: {fileID: 270761150}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.1074, y: 0.8635, z: 0}
-  m_LocalScale: {x: 59.159485, y: 29.74906, z: 1}
+  m_LocalPosition: {x: 3.0426, y: 1.3534, z: 0}
+  m_LocalScale: {x: 63.52479, y: 37.67747, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 334613429}
@@ -545,7 +545,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 12
+  orthographic size: 16
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1917,8 +1917,8 @@ MonoBehaviour:
   restartDelay: 1
   deathHitSound: {fileID: 8300000, guid: 469f12135af825b469a1602d87eaf4dc, type: 3}
   deathHitVolume: 0.2
-  explosionSound: {fileID: 0}
-  explosionVolume: 0.8
+  explosionSound: {fileID: 8300000, guid: 106265c0ea43ec243b4c8584c88305ba, type: 3}
+  explosionVolume: 0.204
 --- !u!1 &1580614173
 GameObject:
   m_ObjectHideFlags: 0
@@ -2036,13 +2036,17 @@ MonoBehaviour:
   wolfSortingOrder: 100
   warningBeepSound: {fileID: 0}
   warningBeepVolume: 0.4
-  dangerPhaseAlertSound: {fileID: 0}
-  dangerPhaseAlertVolume: 0.7
+  dangerPhaseAlertSound: {fileID: 8300000, guid: d3a1a6030ade072488f2421608237dea, type: 3}
+  dangerPhaseAlertVolume: 0.299
   wolfSpawnSound: {fileID: 0}
   wolfSpawnVolume: 0.6
-  rockImpactSound: {fileID: 0}
+  rockSpawnSound: {fileID: 0}
+  rockSpawnVolume: 0.5
+  rockImpactSound: {fileID: 8300000, guid: 21e07935aa62bc64db539f64d756234c, type: 3}
   rockImpactVolume: 0.6
-  wolfAttackSound: {fileID: 0}
+  rockPlatformHitSound: {fileID: 8300000, guid: 9d33939d546cc074ca9899e22b9f234d, type: 3}
+  rockPlatformHitVolume: 0.7
+  wolfAttackSound: {fileID: 8300000, guid: 73720a4cefd0d8844b9698859eb016db, type: 3}
   wolfAttackVolume: 0.8
 --- !u!1 &1734181930
 GameObject:
@@ -2079,6 +2083,7 @@ MonoBehaviour:
   highlightColor: {r: 0.4, g: 0.7, b: 1, a: 1}
   textColor: {r: 1, g: 1, b: 1, a: 1}
   exitButtonColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
+  sliderFillColor: {r: 0.2, g: 0.8, b: 0.4, a: 1}
   fontSize: 16
 --- !u!4 &1734181932
 Transform:
