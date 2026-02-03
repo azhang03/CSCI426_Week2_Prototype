@@ -257,6 +257,64 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &173526560
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 173526561}
+  - component: {fileID: 173526562}
+  m_Layer: 0
+  m_Name: GameEndUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &173526561
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173526560}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1099573271}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &173526562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173526560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 872bee104ed497e4aa66fd92e41a8272, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameEndUI
+  deathTitle: You met a premature end!
+  deathButtonText: Try Again
+  deathTitleColor: {r: 1, g: 0.3, b: 0.3, a: 1}
+  winTitle: You had a fruitful practice session!
+  winButtonText: Again!
+  winTitleColor: {r: 0.3, g: 1, b: 0.5, a: 1}
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.85}
+  panelColor: {r: 0.15, g: 0.15, b: 0.15, a: 0.95}
+  titleFontSize: 36
+  scoreFontSize: 72
+  bestScoreFontSize: 28
+  scoreColor: {r: 1, g: 0.9, b: 0.2, a: 1}
+  bestScoreColor: {r: 0.8, g: 0.8, b: 0.8, a: 1}
+  buttonColor: {r: 0.2, g: 0.6, b: 0.9, a: 1}
 --- !u!1 &270761150
 GameObject:
   m_ObjectHideFlags: 0
@@ -1346,6 +1404,49 @@ MonoBehaviour:
   fontSize: 60
   textColor: {r: 1, g: 1, b: 1, a: 1}
   position: {x: 20, y: -20}
+  basePointValue: 100
+  normalPhasePointIncrease: 50
+  dangerPhasePointIncrease: 75
+  pointIncreaseInterval: 15
+  dangerPhaseStartTime: 60
+  floatingTextFontSize: 28
+  floatingTextColor: {r: 1, g: 1, b: 0.3, a: 1}
+  dangerPhaseFloatingTextColor: {r: 1, g: 0.85, b: 0, a: 1}
+  floatSpeed: 2
+  floatDuration: 1
+--- !u!1 &1099573270
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1099573271}
+  m_Layer: 0
+  m_Name: Menus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1099573271
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1099573270}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1734181932}
+  - {fileID: 173526561}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1280308720
 GameObject:
   m_ObjectHideFlags: 0
@@ -1632,6 +1733,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   groundCheckDistance: 0.1
+  hitboxScale: 0.7
+  hitboxVerticalOffset: 0.1
   health: 1
 --- !u!61 &1385170452
 BoxCollider2D:
@@ -1826,7 +1929,7 @@ MonoBehaviour:
   wolfWarningLeftX: -18
   wolfWarningRightX: 22
   minWolfSpawnY: -6
-  maxWolfSpawnY: 5
+  maxWolfSpawnY: 7
   wolfSpawnOffsetX: 5
   baseBlinkInterval: 0.4
   blinksBeforeDrop: 3
@@ -1835,6 +1938,8 @@ MonoBehaviour:
   baseRockFallSpeed: 10
   wolfScale: 1
   baseWolfMoveSpeed: 12
+  wolvesPerLine: 3
+  wolfSpacing: 2
   baseDelayBetweenSpawns: 2
   difficultyIncreaseInterval: 15
   fallSpeedMultiplierPerInterval: 1.15
@@ -1893,12 +1998,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1734181930}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.14059, y: -0.1913, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1099573271}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1755663059
 GameObject:
@@ -1949,7 +2054,7 @@ MonoBehaviour:
   textColor: {r: 0, g: 0.49056602, b: 0.057948444, a: 0.15}
   topOffset: 0.8
   dangerPhaseStartTime: 60
-  dangerPhaseColor: {r: 1, g: 0.3, b: 0.3, a: 0.6}
+  dangerPhaseColor: {r: 1, g: 0.88914996, b: 0, a: 0.6}
   colorTransitionDuration: 1
   sortingOrder: 1
   sortingLayerName: Default
@@ -2320,6 +2425,8 @@ MonoBehaviour:
   leftSpawnX: -22
   minSpawnY: -7
   maxSpawnY: 9
+  dangerPhaseColor: {r: 1, g: 0.85, b: 0.2, a: 1}
+  colorTransitionDuration: 0.5
 --- !u!1 &2022791757
 GameObject:
   m_ObjectHideFlags: 0
@@ -2358,7 +2465,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 619394802}
-  - {fileID: 1734181932}
+  - {fileID: 1099573271}
   - {fileID: 1383551234}
   - {fileID: 1280308721}
   - {fileID: 334613429}

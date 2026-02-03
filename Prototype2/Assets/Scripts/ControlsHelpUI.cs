@@ -222,8 +222,8 @@ public class ControlsHelpUI : MonoBehaviour
     {
         GameObject container = CreateControlContainer(parent, "Control_Move");
         
-        CreateLabel(container.transform, "LabelTop", "WASD");
-        CreateWASDIcon(container.transform);
+        CreateLabel(container.transform, "LabelTop", "A / D");
+        CreateADIcon(container.transform);
         CreateLabel(container.transform, "LabelBottom", "Move");
     }
 
@@ -406,29 +406,29 @@ public class ControlsHelpUI : MonoBehaviour
         innerRect.anchoredPosition = new Vector2(0, -1);
     }
 
-    void CreateWASDIcon(Transform parent)
+    void CreateADIcon(Transform parent)
     {
-        GameObject iconContainer = new GameObject("WASDIcon");
+        GameObject iconContainer = new GameObject("ADIcon");
         iconContainer.transform.SetParent(parent, false);
         
         RectTransform containerRect = iconContainer.AddComponent<RectTransform>();
         containerRect.sizeDelta = new Vector2(80, 55);
 
-        float keySize = 22f;
-        float keySpacing = 2f;
-        float totalKeyWidth = keySize + keySpacing;
+        float keySize = 24f;
+        float keySpacing = 8f;
+        float arrowOffset = 18f; // How far above the keys the arrows appear
 
-        // W key (top center)
-        CreateKeyIcon(iconContainer.transform, "W", new Vector2(0, totalKeyWidth / 2), keySize);
+        // A key (left)
+        CreateKeyIcon(iconContainer.transform, "A", new Vector2(-keySize / 2 - keySpacing / 2, -5), keySize);
         
-        // A key (bottom left)
-        CreateKeyIcon(iconContainer.transform, "A", new Vector2(-totalKeyWidth, -totalKeyWidth / 2), keySize);
+        // D key (right)
+        CreateKeyIcon(iconContainer.transform, "D", new Vector2(keySize / 2 + keySpacing / 2, -5), keySize);
         
-        // S key (bottom center)
-        CreateKeyIcon(iconContainer.transform, "S", new Vector2(0, -totalKeyWidth / 2), keySize);
+        // Left arrow above A key (pointing left, rotation = 90)
+        CreateArrow(iconContainer.transform, "ArrowLeft", new Vector2(-keySize / 2 - keySpacing / 2, arrowOffset), 90);
         
-        // D key (bottom right)
-        CreateKeyIcon(iconContainer.transform, "D", new Vector2(totalKeyWidth, -totalKeyWidth / 2), keySize);
+        // Right arrow above D key (pointing right, rotation = -90)
+        CreateArrow(iconContainer.transform, "ArrowRight", new Vector2(keySize / 2 + keySpacing / 2, arrowOffset), -90);
     }
 
     void CreateKeyIcon(Transform parent, string keyLabel, Vector2 position, float size)

@@ -200,6 +200,14 @@ public class FallingRockSpawner : MonoBehaviour
 
     IEnumerator SpawnCycle()
     {
+        // Wait until the game has started (first target hit)
+        while (GameTimer.Instance == null || !GameTimer.Instance.HasGameStarted())
+        {
+            yield return null;
+        }
+        
+        Debug.Log("First target hit - hazards now spawning!");
+        
         while (true)
         {
             // === DETERMINE WHAT TO SPAWN THIS CYCLE ===
