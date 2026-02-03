@@ -74,11 +74,21 @@ public class Target : MonoBehaviour
             Debug.Log("HIT");
             
             // Choose random side for new target
-            float X = Random.Range(0, 2) == 1 ? rightSpawnX : leftSpawnX;
+            bool spawnOnRight = Random.Range(0, 2) == 1;
+            float X = spawnOnRight ? rightSpawnX : leftSpawnX;
             float Y = Random.Range(minSpawnY, maxSpawnY);
             
             // Spawn new target
-            Instantiate(this, new Vector3(X, Y, 0), Quaternion.identity);
+            Target newTarget = Instantiate(this, new Vector3(X, Y, 0), Quaternion.identity);
+            
+            // Flip target to face the player (center of screen)
+            // If on left side, flip horizontally so it faces right
+            // If on right side, don't flip so it faces left
+            SpriteRenderer newSR = newTarget.GetComponent<SpriteRenderer>();
+            if (newSR != null)
+            {
+                newSR.flipX = !spawnOnRight; // Flip if on left side
+            }
             
             // Update score with current point value
             if (scoreManager != null)
