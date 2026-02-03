@@ -24,6 +24,25 @@ public class PlayerMovement : MonoBehaviour
     
     [Tooltip("Vertical offset for the hitbox (positive = up, useful to shrink from feet)")]
     [SerializeField] private float hitboxVerticalOffset = 0.1f;
+    
+    [Header("Audio")]
+    [Tooltip("Sound when jumping")]
+    [SerializeField] private AudioClip jumpSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float jumpVolume = 0.5f;
+    
+    [Tooltip("Sound when taking damage")]
+    [SerializeField] private AudioClip hurtSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float hurtVolume = 0.7f;
+    
+    [Tooltip("Footstep sounds (multiple for variety, or just one)")]
+    [SerializeField] private AudioClip[] walkSounds;
+    [Range(0f, 1f)]
+    [SerializeField] private float walkVolume = 0.4f;
+    
+    [Tooltip("Time between footstep sounds")]
+    [SerializeField] private float footstepInterval = 0.35f;
 
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
@@ -36,6 +55,7 @@ public class PlayerMovement : MonoBehaviour
     private bool jumpHold = false;
     private bool jumped = false;
     private int airJumpsRemaining;
+    private float footstepTimer = 0f;
 
     private void Start()
     {
@@ -114,11 +134,13 @@ public class PlayerMovement : MonoBehaviour
                 if (grounded)
                 {
                     jumped = true;
+                    PlayJumpSound();
                 }
                 else if (airJumpsRemaining > 0)
                 {
                     jumped = true;
                     airJumpsRemaining--;
+                    PlayJumpSound();
                 }
             }
             jumpHold = true;
@@ -128,10 +150,42 @@ public class PlayerMovement : MonoBehaviour
             jumpHold = false;
         }
 
+        // Handle footstep sounds
+        HandleFootsteps(grounded);
+
         // Y is processed as force
 
         // Normalize to prevent faster diagonal movement
         // moveInput = moveInput.normalized;
+    }
+    
+    private void HandleFootsteps(bool grounded)
+    {
+        // Only play footsteps when grounded and moving
+        bool isMoving = Mathf.Abs(moveInput.x) > 0.1f;
+        
+        if (grounded && isMoving)
+        {
+            footstepTimer -= Time.deltaTime;
+            
+            if (footstepTimer <= 0f)
+            {
+                PlayFootstepSound();
+                footstepTimer = footstepInterval;
+            }
+        }
+        else
+        {
+            // Reset timer when not moving or in air (so first step plays immediately when landing/starting)
+            footstepTimer = 0f;
+        }
+    }
+    
+    private void PlayFootstepSound()
+    {
+        if (SoundManager.Instance == null || walkSounds == null || walkSounds.Length == 0) return;
+        
+        SoundManager.Instance.PlayRandomSound(walkSounds, transform.position, walkVolume);
     }
 
     private void FixedUpdate()
@@ -157,14 +211,37 @@ public class PlayerMovement : MonoBehaviour
         health -= amount;
         Debug.Log($"Player took {amount} damage! Health: {health}");
         
+        // Play hurt sound
+        if (SoundManager.Instance != null && hurtSound != null)
+        {
+            SoundManager.Instance.PlaySound(hurtSound, transform, hurtVolume);
+        }
+        
         if (health <= 0)
         {
+            // Death will trigger its own stronger shake
             // Trigger death
             PlayerDeath death = GetComponent<PlayerDeath>();
             if (death != null)
             {
                 death.TriggerDeath();
             }
+        }
+        else
+        {
+            // Light screen shake for non-lethal hit
+            if (CameraShake.Instance != null)
+            {
+                CameraShake.Instance.HitShake();
+            }
+        }
+    }
+    
+    private void PlayJumpSound()
+    {
+        if (SoundManager.Instance != null && jumpSound != null)
+        {
+            SoundManager.Instance.PlaySoundWithPitchVariation(jumpSound, transform.position, jumpVolume, 0.9f, 1.1f);
         }
     }
     

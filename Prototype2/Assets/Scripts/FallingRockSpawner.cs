@@ -114,6 +114,42 @@ public class FallingRockSpawner : MonoBehaviour
     [SerializeField] private int warningSortingOrder = 10;
     [SerializeField] private int rockSortingOrder = 5;
     [SerializeField] private int wolfSortingOrder = 100;
+    
+    [Header("Audio")]
+    [Tooltip("Warning beep sound (plays with each blink)")]
+    [SerializeField] private AudioClip warningBeepSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float warningBeepVolume = 0.4f;
+    
+    [Tooltip("Alert sound when danger phase begins")]
+    [SerializeField] private AudioClip dangerPhaseAlertSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float dangerPhaseAlertVolume = 0.7f;
+    
+    [Tooltip("Wolf howl/growl when wolves spawn")]
+    [SerializeField] private AudioClip wolfSpawnSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float wolfSpawnVolume = 0.6f;
+    
+    [Tooltip("Sound when rock spawns/drops")]
+    [SerializeField] private AudioClip rockSpawnSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float rockSpawnVolume = 0.5f;
+    
+    [Tooltip("Rock impact sound - ground (passed to spawned rocks)")]
+    [SerializeField] private AudioClip rockImpactSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float rockImpactVolume = 0.6f;
+    
+    [Tooltip("Rock hitting platform sound (passed to spawned rocks)")]
+    [SerializeField] private AudioClip rockPlatformHitSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float rockPlatformHitVolume = 0.7f;
+    
+    [Tooltip("Wolf attack sound (passed to spawned wolves)")]
+    [SerializeField] private AudioClip wolfAttackSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float wolfAttackVolume = 0.8f;
 
     private Camera mainCamera;
     private List<GameObject> currentWarnings = new List<GameObject>();
@@ -153,6 +189,12 @@ public class FallingRockSpawner : MonoBehaviour
         {
             wolvesEnabled = true;
             Debug.Log("Wolves are now spawning!");
+            
+            // Play danger phase alert sound
+            if (SoundManager.Instance != null && dangerPhaseAlertSound != null)
+            {
+                SoundManager.Instance.PlaySound(dangerPhaseAlertSound, mainCamera.transform, dangerPhaseAlertVolume);
+            }
         }
         
         // Check if it's time to increase difficulty
@@ -246,6 +288,15 @@ public class FallingRockSpawner : MonoBehaviour
             {
                 // Show all warnings
                 SetAllWarningsVisible(true);
+                
+                // Play warning beep on each blink (pitch increases as we get closer to spawn)
+                if (SoundManager.Instance != null && warningBeepSound != null)
+                {
+                    float pitch = 1f + (i * 0.15f); // Increasing pitch: 1.0, 1.15, 1.3, etc.
+                    AudioSource beep = SoundManager.Instance.PlaySound(warningBeepSound, mainCamera.transform, warningBeepVolume);
+                    if (beep != null) beep.pitch = pitch;
+                }
+                
                 yield return new WaitForSeconds(cycleBlinkInterval);
                 
                 // Hide all warnings (except on last blink)
@@ -261,10 +312,22 @@ public class FallingRockSpawner : MonoBehaviour
             // Spawn rock
             SpawnRock(rockSpawnX);
             
+            // Play rock spawn sound
+            if (SoundManager.Instance != null && rockSpawnSound != null)
+            {
+                SoundManager.Instance.PlaySoundWithPitchVariation(rockSpawnSound, mainCamera.transform.position, rockSpawnVolume, 0.9f, 1.1f);
+            }
+            
             // Spawn wolf if enabled
             if (spawnWolf)
             {
                 SpawnWolf(wolfSpawnY, wolfFromRight);
+                
+                // Play wolf spawn sound
+                if (SoundManager.Instance != null && wolfSpawnSound != null)
+                {
+                    SoundManager.Instance.PlaySound(wolfSpawnSound, mainCamera.transform, wolfSpawnVolume);
+                }
             }
             
             // Clean up all warnings
@@ -387,6 +450,16 @@ public class FallingRockSpawner : MonoBehaviour
         FallingRock fallingRock = rock.AddComponent<FallingRock>();
         fallingRock.SetFallSpeed(currentRockFallSpeed);
         
+        // Pass sounds to the rock
+        if (rockImpactSound != null)
+        {
+            fallingRock.SetImpactSound(rockImpactSound, rockImpactVolume);
+        }
+        if (rockPlatformHitSound != null)
+        {
+            fallingRock.SetPlatformHitSound(rockPlatformHitSound, rockPlatformHitVolume);
+        }
+        
         rock.tag = "Damage";
     }
     
@@ -456,6 +529,12 @@ public class FallingRockSpawner : MonoBehaviour
         WolfLine wolfLine = wolf.AddComponent<WolfLine>();
         wolfLine.SetMoveSpeed(currentWolfMoveSpeed);
         wolfLine.SetDirection(moveDirection);
+        
+        // Pass the attack sound to the wolf
+        if (wolfAttackSound != null)
+        {
+            wolfLine.SetAttackSound(wolfAttackSound, wolfAttackVolume);
+        }
         
         wolf.tag = "Damage";
     }

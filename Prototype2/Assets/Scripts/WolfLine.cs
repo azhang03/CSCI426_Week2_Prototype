@@ -6,6 +6,12 @@ public class WolfLine : MonoBehaviour
     [Tooltip("Initial horizontal speed (can be overridden by spawner)")]
     [SerializeField] private float initialMoveSpeed = 15f;
     
+    [Header("Audio")]
+    [Tooltip("Sound when wolf hits the player")]
+    [SerializeField] private AudioClip attackSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float attackVolume = 0.8f;
+    
     private float moveSpeed;
     private int moveDirection = 1; // 1 = right, -1 = left
     private Camera mainCamera;
@@ -83,6 +89,12 @@ public class WolfLine : MonoBehaviour
         
         if (other.CompareTag("Player"))
         {
+            // Play attack sound
+            if (SoundManager.Instance != null && attackSound != null)
+            {
+                SoundManager.Instance.PlaySound(attackSound, transform, attackVolume);
+            }
+            
             // Instant kill - trigger death
             PlayerDeath death = other.GetComponent<PlayerDeath>();
             if (death != null)
@@ -99,5 +111,14 @@ public class WolfLine : MonoBehaviour
                 }
             }
         }
+    }
+    
+    /// <summary>
+    /// Set the attack sound (called by spawner to share sound across all wolves)
+    /// </summary>
+    public void SetAttackSound(AudioClip sound, float volume)
+    {
+        attackSound = sound;
+        attackVolume = volume;
     }
 }

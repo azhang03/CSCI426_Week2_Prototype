@@ -35,6 +35,17 @@ public class PlayerDeath : MonoBehaviour
     
     [Tooltip("How long after explosion before restarting")]
     [SerializeField] private float restartDelay = 1f;
+    
+    [Header("Audio")]
+    [Tooltip("Sound at the moment of death (hitstop)")]
+    [SerializeField] private AudioClip deathHitSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float deathHitVolume = 1f;
+    
+    [Tooltip("Sound for the explosion")]
+    [SerializeField] private AudioClip explosionSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float explosionVolume = 0.8f;
 
     private Camera mainCamera;
     private SpriteRenderer spriteRenderer;
@@ -111,6 +122,18 @@ public class PlayerDeath : MonoBehaviour
         
         // Disable player controls immediately
         DisablePlayerControls();
+        
+        // Play death hit sound
+        if (SoundManager.Instance != null && deathHitSound != null)
+        {
+            SoundManager.Instance.PlaySound(deathHitSound, transform, deathHitVolume);
+        }
+        
+        // Camera shake for impact
+        if (CameraShake.Instance != null)
+        {
+            CameraShake.Instance.DeathShake();
+        }
         
         // === PHASE 1: HITSTOP - FREEZE EVERYTHING ===
         Time.timeScale = 0f;
@@ -197,6 +220,12 @@ public class PlayerDeath : MonoBehaviour
 
     void SpawnExplosion()
     {
+        // Play explosion sound
+        if (SoundManager.Instance != null && explosionSound != null)
+        {
+            SoundManager.Instance.PlaySound(explosionSound, transform, explosionVolume);
+        }
+        
         if (explosionEffectPrefab != null)
         {
             GameObject explosion = Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);

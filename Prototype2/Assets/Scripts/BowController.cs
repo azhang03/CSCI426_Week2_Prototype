@@ -23,6 +23,22 @@ public class BowController : MonoBehaviour
     
     [Tooltip("Spawn offset from player center")]
     [SerializeField] private float spawnOffset = 0.5f;
+    
+    [Header("Audio")]
+    [Tooltip("Sound when starting to charge the bow")]
+    [SerializeField] private AudioClip chargeStartSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float chargeStartVolume = 0.5f;
+    
+    [Tooltip("Sound when releasing the arrow")]
+    [SerializeField] private AudioClip fireSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float fireVolume = 0.7f;
+    
+    [Tooltip("Sound when bow reaches full charge (optional)")]
+    [SerializeField] private AudioClip fullChargeSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float fullChargeVolume = 0.5f;
 
     [Header("UI")]
     [Tooltip("The charge indicator image (should be set to Image Type: Filled)")]
@@ -43,6 +59,8 @@ public class BowController : MonoBehaviour
     private Canvas parentCanvas;
     private float currentChargeTime;
     private bool isCharging;
+    private bool hasPlayedFullChargeSound;
+    private AudioSource chargeAudioSource; // Reference to stop charge sound on early release
 
     private void Start()
     {
@@ -117,6 +135,13 @@ public class BowController : MonoBehaviour
     {
         isCharging = true;
         currentChargeTime = 0f;
+        hasPlayedFullChargeSound = false;
+
+        // Play charge start sound and keep reference to stop it on early release
+        if (SoundManager.Instance != null && chargeStartSound != null)
+        {
+            chargeAudioSource = SoundManager.Instance.PlaySound(chargeStartSound, transform, chargeStartVolume);
+        }
 
         // Show charge UI
         if (chargeUIContainer != null)
@@ -131,6 +156,16 @@ public class BowController : MonoBehaviour
     {
         currentChargeTime += Time.deltaTime;
         currentChargeTime = Mathf.Min(currentChargeTime, maxChargeTime);
+
+        // Play full charge sound when reaching max charge
+        if (!hasPlayedFullChargeSound && currentChargeTime >= maxChargeTime)
+        {
+            hasPlayedFullChargeSound = true;
+            if (SoundManager.Instance != null && fullChargeSound != null)
+            {
+                SoundManager.Instance.PlaySound(fullChargeSound, transform, fullChargeVolume);
+            }
+        }
 
         UpdateChargeUI();
     }
@@ -173,12 +208,29 @@ public class BowController : MonoBehaviour
     {
         isCharging = false;
 
+        // Stop the charge sound if it's still playing
+        if (chargeAudioSource != null)
+        {
+            chargeAudioSource.Stop();
+            Destroy(chargeAudioSource.gameObject);
+            chargeAudioSource = null;
+        }
+
         // Calculate power based on charge time
         float chargePercent = currentChargeTime / maxChargeTime;
         float power = Mathf.Lerp(minPower, maxPower, chargePercent);
 
         // Get aim direction
         Vector2 aimDirection = playerAiming != null ? playerAiming.GetAimDirection() : Vector2.right;
+
+        // Play fire sound (pitch varies with charge level for feedback)
+        if (SoundManager.Instance != null && fireSound != null)
+        {
+            // Higher charge = lower pitch (more powerful feel)
+            float pitch = Mathf.Lerp(1.1f, 0.9f, chargePercent);
+            AudioSource source = SoundManager.Instance.PlaySound(fireSound, transform, fireVolume);
+            if (source != null) source.pitch = pitch;
+        }
 
         // Spawn arrow
         if (arrowPrefab != null)

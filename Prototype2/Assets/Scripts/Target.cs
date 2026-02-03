@@ -15,6 +15,12 @@ public class Target : MonoBehaviour
     [Tooltip("How long the color transition takes")]
     [SerializeField] private float colorTransitionDuration = 0.5f;
     
+    [Header("Audio")]
+    [Tooltip("Sound when target is hit by arrow")]
+    [SerializeField] private AudioClip hitSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float hitVolume = 0.8f;
+    
     private Score scoreManager;
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
@@ -72,6 +78,12 @@ public class Target : MonoBehaviour
         if (other.CompareTag("Arrow"))
         {
             Debug.Log("HIT");
+            
+            // Play hit sound
+            if (SoundManager.Instance != null && hitSound != null)
+            {
+                SoundManager.Instance.PlaySoundWithPitchVariation(hitSound, transform.position, hitVolume, 0.95f, 1.05f);
+            }
             
             // Choose random side for new target
             bool spawnOnRight = Random.Range(0, 2) == 1;

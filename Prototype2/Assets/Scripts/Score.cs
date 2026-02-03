@@ -32,6 +32,12 @@ public class Score : MonoBehaviour
     [SerializeField] private float floatSpeed = 2f;
     [SerializeField] private float floatDuration = 1f;
     
+    [Header("Audio")]
+    [Tooltip("Sound when scoring points")]
+    [SerializeField] private AudioClip scoreSound;
+    [Range(0f, 1f)]
+    [SerializeField] private float scoreVolume = 0.6f;
+    
     private Text scoreText;
     private Canvas uiCanvas;
     private Camera mainCamera;
@@ -155,6 +161,16 @@ public class Score : MonoBehaviour
         
         score += points;
         UpdateScoreText();
+        
+        // Play score sound with pitch variation based on point value
+        if (SoundManager.Instance != null && scoreSound != null)
+        {
+            // Higher points = higher pitch for better feedback
+            float pitch = 1f + (points / 500f) * 0.3f; // Small pitch increase for higher scores
+            pitch = Mathf.Clamp(pitch, 0.9f, 1.3f);
+            AudioSource source = SoundManager.Instance.PlayUISound(scoreSound, scoreVolume);
+            if (source != null) source.pitch = pitch;
+        }
         
         // Create floating text indicator
         CreateFloatingText(points, worldPosition);
