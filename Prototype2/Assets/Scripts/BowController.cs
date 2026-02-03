@@ -188,6 +188,9 @@ public class BowController : MonoBehaviour
             
             GameObject arrow = Instantiate(arrowPrefab, spawnPos, Quaternion.Euler(0f, 0f, angle));
             
+            // Ensure arrow is tagged for collision detection
+            arrow.tag = "Arrow";
+            
             // Set arrow velocity
             Rigidbody2D arrowRb = arrow.GetComponent<Rigidbody2D>();
             if (arrowRb != null)

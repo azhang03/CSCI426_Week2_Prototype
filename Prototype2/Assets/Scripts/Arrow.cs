@@ -35,14 +35,16 @@ public class Arrow : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // Don't destroy during death animation (time frozen)
+        if (Time.timeScale == 0f) return;
+        
         // Don't hit the player
         if (other.CompareTag("Player")) return;
 
+        // Don't hit targets (handled separately by Target script)
         if (other.CompareTag("Target")) return;
 
-        if (other.CompareTag("Damage")) return;
-
-        // Handle hit (we'll expand this later for targets)
+        // Handle hit (including rocks tagged as "Damage")
         Debug.Log($"Arrow hit: {other.gameObject.name}");
 
         if (destroyOnHit)
@@ -53,12 +55,16 @@ public class Arrow : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // Don't destroy during death animation (time frozen)
+        if (Time.timeScale == 0f) return;
+        
         // Don't hit the player
         if (collision.gameObject.CompareTag("Player")) return;
 
+        // Don't hit targets (handled separately by Target script)
         if (collision.gameObject.CompareTag("Target")) return;
 
-        // Handle hit
+        // Handle hit (including rocks tagged as "Damage")
         Debug.Log($"Arrow hit: {collision.gameObject.name}");
 
         if (destroyOnHit)

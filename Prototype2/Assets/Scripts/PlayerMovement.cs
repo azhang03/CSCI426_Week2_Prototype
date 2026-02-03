@@ -127,4 +127,31 @@ public class PlayerMovement : MonoBehaviour
             other.GetComponent<DamageZone>().HealthReducedCoolDown();
         }
     }
+    
+    /// <summary>
+    /// Apply damage to the player
+    /// </summary>
+    public void TakeDamage(int amount)
+    {
+        health -= amount;
+        Debug.Log($"Player took {amount} damage! Health: {health}");
+        
+        if (health <= 0)
+        {
+            // Trigger death
+            PlayerDeath death = GetComponent<PlayerDeath>();
+            if (death != null)
+            {
+                death.TriggerDeath();
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Get current health
+    /// </summary>
+    public int GetHealth()
+    {
+        return health;
+    }
 }
