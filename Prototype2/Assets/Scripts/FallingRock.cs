@@ -3,14 +3,23 @@ using UnityEngine;
 public class FallingRock : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float fallSpeed = 10f;
+    [Tooltip("Initial fall speed (can be overridden by spawner)")]
+    [SerializeField] private float initialFallSpeed = 10f;
     
     [Header("Damage")]
     [SerializeField] private int damage = 1;
     
+    private float fallSpeed;
+    
     private Rigidbody2D rb;
     private Camera mainCamera;
 
+    void Awake()
+    {
+        // Initialize fall speed from the serialized initial value
+        fallSpeed = initialFallSpeed;
+    }
+    
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -24,7 +33,7 @@ public class FallingRock : MonoBehaviour
     }
     
     /// <summary>
-    /// Set the fall speed (called by spawner)
+    /// Set the fall speed (called by spawner to override initial value)
     /// </summary>
     public void SetFallSpeed(float speed)
     {

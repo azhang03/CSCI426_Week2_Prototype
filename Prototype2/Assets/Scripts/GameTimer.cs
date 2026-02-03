@@ -12,6 +12,16 @@ public class GameTimer : MonoBehaviour
     [SerializeField] private Color textColor = new Color(1f, 1f, 1f, 0.5f);
     [SerializeField] private float topOffset = 0.8f; // How far from center (0 = center, 1 = top edge)
     
+    [Header("Danger Phase Settings")]
+    [Tooltip("Time elapsed (in seconds) when danger phase begins and color changes")]
+    [SerializeField] private float dangerPhaseStartTime = 60f;
+    
+    [Tooltip("Timer color after danger phase begins (wolves start spawning)")]
+    [SerializeField] private Color dangerPhaseColor = new Color(1f, 0.3f, 0.3f, 0.6f);
+    
+    [Tooltip("How long the color transition takes")]
+    [SerializeField] private float colorTransitionDuration = 1f;
+    
     [Header("Sorting")]
     [Tooltip("Sorting order for the timer (lower = further back)")]
     [SerializeField] private int sortingOrder = -10;
@@ -21,7 +31,26 @@ public class GameTimer : MonoBehaviour
     private Canvas timerCanvas;
     private Camera mainCamera;
     private float currentTime;
-    private bool isRunning = true;
+    private bool isRunning = false; // Start paused until first target hit
+    private bool hasStarted = false; // Track if game has truly started
+    private float elapsedTime = 0f;
+    private bool inDangerPhase = false;
+    private float colorTransitionProgress = 0f;
+    
+    // Singleton for easy access
+    public static GameTimer Instance { get; private set; }
+    
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
@@ -36,12 +65,32 @@ public class GameTimer : MonoBehaviour
         if (!isRunning) return;
         
         currentTime -= Time.deltaTime;
+        elapsedTime += Time.deltaTime;
         
         if (currentTime <= 0f)
         {
             currentTime = 0f;
             isRunning = false;
             OnTimerEnd();
+        }
+        
+        // Check for danger phase transition
+        if (!inDangerPhase && elapsedTime >= dangerPhaseStartTime)
+        {
+            inDangerPhase = true;
+            Debug.Log("Danger phase started! Timer color changing.");
+        }
+        
+        // Smoothly transition color if in danger phase
+        if (inDangerPhase && colorTransitionProgress < 1f)
+        {
+            colorTransitionProgress += Time.deltaTime / colorTransitionDuration;
+            colorTransitionProgress = Mathf.Clamp01(colorTransitionProgress);
+            
+            if (timerText != null)
+            {
+                timerText.color = Color.Lerp(textColor, dangerPhaseColor, colorTransitionProgress);
+            }
         }
         
         UpdateTimerDisplay();
@@ -113,8 +162,54 @@ public class GameTimer : MonoBehaviour
 
     void OnTimerEnd()
     {
-        // TODO: Handle game over / time's up logic
-        Debug.Log("Time's up!");
+        Debug.Log("Time's up! You survived!");
+        
+        // Disable player controls
+        DisablePlayerControls();
+        
+        // Get final score
+        Score scoreManager = FindFirstObjectByType<Score>();
+        int finalScore = scoreManager != null ? scoreManager.GetScore() : 0;
+        
+        // Show win screen via GameEndUI
+        if (GameEndUI.Instance != null)
+        {
+            GameEndUI.Instance.ShowWinScreen(finalScore);
+        }
+        else
+        {
+            Debug.LogWarning("GameEndUI not found! Add a GameEndUI component to the scene.");
+        }
+    }
+    
+    void DisablePlayerControls()
+    {
+        // Find player and disable controls
+        PlayerMovement movement = FindFirstObjectByType<PlayerMovement>();
+        if (movement != null)
+        {
+            movement.enabled = false;
+            
+            // Also disable aiming
+            PlayerAiming aiming = movement.GetComponent<PlayerAiming>();
+            if (aiming != null)
+            {
+                aiming.HideAimIndicator();
+                aiming.enabled = false;
+            }
+            
+            // Disable bow
+            BowController bow = movement.GetComponent<BowController>();
+            if (bow != null)
+                bow.enabled = false;
+            
+            // Stop rigidbody
+            Rigidbody2D rb = movement.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+            }
+        }
     }
 
     /// <summary>
@@ -134,6 +229,26 @@ public class GameTimer : MonoBehaviour
     }
 
     /// <summary>
+    /// Start the countdown (called when first target is hit)
+    /// </summary>
+    public void StartCountdown()
+    {
+        if (hasStarted) return; // Already started
+        
+        hasStarted = true;
+        isRunning = true;
+        Debug.Log("Timer started! First target hit.");
+    }
+    
+    /// <summary>
+    /// Returns true if the game has started (first target was hit)
+    /// </summary>
+    public bool HasGameStarted()
+    {
+        return hasStarted;
+    }
+
+    /// <summary>
     /// Pause the timer
     /// </summary>
     public void Pause()
@@ -146,7 +261,7 @@ public class GameTimer : MonoBehaviour
     /// </summary>
     public void Resume()
     {
-        if (currentTime > 0f)
+        if (currentTime > 0f && hasStarted)
             isRunning = true;
     }
 
@@ -156,7 +271,25 @@ public class GameTimer : MonoBehaviour
     public void ResetTimer()
     {
         currentTime = startTime;
-        isRunning = true;
+        elapsedTime = 0f;
+        isRunning = false;
+        hasStarted = false;
+        inDangerPhase = false;
+        colorTransitionProgress = 0f;
+        
+        if (timerText != null)
+        {
+            timerText.color = textColor;
+        }
+        
         UpdateTimerDisplay();
+    }
+    
+    /// <summary>
+    /// Returns true if the game is in danger phase (wolves spawning)
+    /// </summary>
+    public bool IsInDangerPhase()
+    {
+        return inDangerPhase;
     }
 }

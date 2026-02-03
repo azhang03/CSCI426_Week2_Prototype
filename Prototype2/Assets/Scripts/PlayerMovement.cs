@@ -16,9 +16,19 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [Tooltip("How far below the player to check for ground")]
     [SerializeField] private float groundCheckDistance = 0.1f;
+    
+    [Header("Hitbox Settings")]
+    [Tooltip("Scale of the hitbox relative to sprite (0.5 = half size, more forgiving)")]
+    [Range(0.1f, 1f)]
+    [SerializeField] private float hitboxScale = 0.7f;
+    
+    [Tooltip("Vertical offset for the hitbox (positive = up, useful to shrink from feet)")]
+    [SerializeField] private float hitboxVerticalOffset = 0.1f;
 
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
+    private Vector2 originalColliderSize;
+    private Vector2 originalColliderOffset;
 
     [SerializeField] private int health = 3;
     private Vector2 moveInput;
@@ -36,6 +46,27 @@ public class PlayerMovement : MonoBehaviour
         if (rb == null)
         {
             Debug.LogError("PlayerMovement requires a Rigidbody2D component!");
+        }
+        
+        // Apply forgiving hitbox scaling
+        if (boxCollider != null)
+        {
+            originalColliderSize = boxCollider.size;
+            originalColliderOffset = boxCollider.offset;
+            
+            // Shrink the collider for more forgiving hits
+            boxCollider.size = new Vector2(
+                originalColliderSize.x * hitboxScale,
+                originalColliderSize.y * hitboxScale
+            );
+            
+            // Apply vertical offset (useful to pull hitbox up from feet)
+            boxCollider.offset = new Vector2(
+                originalColliderOffset.x,
+                originalColliderOffset.y + hitboxVerticalOffset
+            );
+            
+            Debug.Log($"Player hitbox scaled to {hitboxScale * 100}% of original size");
         }
     }
     

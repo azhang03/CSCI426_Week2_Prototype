@@ -150,11 +150,11 @@ public class PlayerDeath : MonoBehaviour
         // Spawn explosion effect
         SpawnExplosion();
         
-        // Wait before restart (still using realtime since game is frozen)
+        // Wait before showing death screen (still using realtime since game is frozen)
         yield return new WaitForSecondsRealtime(restartDelay);
         
-        // Restart the game
-        RestartGame();
+        // Show death screen instead of auto-restarting
+        ShowDeathScreen();
     }
 
     void DisablePlayerControls()
@@ -290,11 +290,25 @@ public class PlayerDeath : MonoBehaviour
             Destroy(obj);
     }
 
-    void RestartGame()
+    void ShowDeathScreen()
     {
-        Time.timeScale = 1f;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(
-            UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
-        );
+        // Get final score
+        Score scoreManager = FindFirstObjectByType<Score>();
+        int finalScore = scoreManager != null ? scoreManager.GetScore() : 0;
+        
+        // Show death screen via GameEndUI
+        if (GameEndUI.Instance != null)
+        {
+            GameEndUI.Instance.ShowDeathScreen(finalScore);
+        }
+        else
+        {
+            // Fallback: just restart if no GameEndUI exists
+            Debug.LogWarning("GameEndUI not found! Add a GameEndUI component to the scene.");
+            Time.timeScale = 1f;
+            UnityEngine.SceneManagement.SceneManager.LoadScene(
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
+            );
+        }
     }
 }

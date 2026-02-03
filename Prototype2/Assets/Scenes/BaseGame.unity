@@ -147,7 +147,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 2.05, y: -9.08, z: 0}
-  m_LocalScale: {x: 36.76, y: 3.4499998, z: 1}
+  m_LocalScale: {x: 30, y: 3.4499998, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1580614174}
@@ -848,8 +848,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageablePlatform
   blinkCount: 3
-  blinkInterval: 0.8
+  blinkInterval: 0.2
   translucentAlpha: 0.3
+  damagedColor: {r: 0, g: 0.3207547, b: 0.03080781, a: 1}
 --- !u!1 &753339418
 GameObject:
   m_ObjectHideFlags: 0
@@ -1022,8 +1023,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageablePlatform
   blinkCount: 3
-  blinkInterval: 0.8
+  blinkInterval: 0.2
   translucentAlpha: 0.3
+  damagedColor: {r: 0, g: 0.3207547, b: 0.03080781, a: 1}
 --- !u!1 &804871188
 GameObject:
   m_ObjectHideFlags: 0
@@ -1813,20 +1815,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9abbf8614b9280a469676605011f7e98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FallingRockSpawner
-  warningSprite: {fileID: 21300000, guid: 088e247c0519f1e4da998b3f1046e45d, type: 3}
+  rockWarningSprite: {fileID: 21300000, guid: 088e247c0519f1e4da998b3f1046e45d, type: 3}
   rockSprite: {fileID: 21300000, guid: 0818adf539bb26d458099538126d91d3, type: 3}
-  minSpawnX: -14
-  maxSpawnX: 17
-  spawnHeightOffset: 2
-  blinkInterval: 0.4
+  wolfWarningSprite: {fileID: 21300000, guid: 71d2240a44faddc45b463ca9b1a01dd0, type: 3}
+  wolfSprite: {fileID: 21300000, guid: 4e7e4bbe509a89544bd6556e15642fbb, type: 3}
+  minRockSpawnX: -13
+  maxRockSpawnX: 17
+  rockSpawnHeightOffset: 2
+  wolfSpawnStartTime: 60
+  wolfWarningLeftX: -18
+  wolfWarningRightX: 22
+  minWolfSpawnY: -6
+  maxWolfSpawnY: 5
+  wolfSpawnOffsetX: 5
+  baseBlinkInterval: 0.4
   blinksBeforeDrop: 3
   warningScale: 3.5
   rockScale: 3
-  rockFallSpeed: 10
-  delayBetweenRocks: 2
+  baseRockFallSpeed: 10
+  wolfScale: 1
+  baseWolfMoveSpeed: 12
+  baseDelayBetweenSpawns: 2
+  difficultyIncreaseInterval: 15
+  fallSpeedMultiplierPerInterval: 1.15
+  wolfSpeedMultiplierPerInterval: 1.15
+  blinkSpeedMultiplierPerInterval: 0.85
+  delayMultiplierPerInterval: 0.9
+  minBlinkInterval: 0.1
+  maxRockFallSpeed: 30
+  maxWolfMoveSpeed: 25
+  minDelayBetweenSpawns: 0.5
   sortingLayerName: Default
   warningSortingOrder: 10
   rockSortingOrder: 5
+  wolfSortingOrder: 100
 --- !u!1 &1734181930
 GameObject:
   m_ObjectHideFlags: 0
@@ -1926,6 +1948,9 @@ MonoBehaviour:
   fontSize: 9000
   textColor: {r: 0, g: 0.49056602, b: 0.057948444, a: 0.15}
   topOffset: 0.8
+  dangerPhaseStartTime: 60
+  dangerPhaseColor: {r: 1, g: 0.3, b: 0.3, a: 0.6}
+  colorTransitionDuration: 1
   sortingOrder: 1
   sortingLayerName: Default
 --- !u!1 &1827203428
@@ -2100,8 +2125,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DamageablePlatform
   blinkCount: 3
-  blinkInterval: 0.8
+  blinkInterval: 0.2
   translucentAlpha: 0.3
+  damagedColor: {r: 0, g: 0.3207547, b: 0.03080781, a: 1}
 --- !u!1 &1853749612
 GameObject:
   m_ObjectHideFlags: 0
